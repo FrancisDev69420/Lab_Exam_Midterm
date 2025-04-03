@@ -18,15 +18,12 @@ Route::post('checkout', [OrderController::class, 'store']);
 
 
 
-// Apply Sanctum's stateful middleware and then authentication
-Route::middleware([EnsureFrontendRequestsAreStateful::class, 'auth:sanctum'])->group(function () {
-    // Protected routes for authenticated users
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/checkouts', [CheckoutMonitoringController::class, 'index']);
     Route::get('/checkouts/{id}', [CheckoutMonitoringController::class, 'show']);
     Route::get('/checkouts/filter/{date}', [CheckoutMonitoringController::class, 'filterByDate']);
 });
 
-// Public routes for registration and login (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
