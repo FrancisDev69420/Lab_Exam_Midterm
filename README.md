@@ -1,1 +1,0 @@
-# Lab_Exam_Midterm
