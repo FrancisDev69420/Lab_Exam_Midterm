@@ -28,6 +28,8 @@ body {
     margin-bottom: 30px;
     display: flex;
     justify-content: center;
+    align-items: center; /* Center-align vertically */
+    gap: 10px; /* Add spacing between input and button */
 }
 
 .search-bar input {
@@ -38,6 +40,33 @@ body {
     border-radius: 5px;
     font-size: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.search-bar input:focus {
+    border-color: #007185;
+    box-shadow: 0 0 8px rgba(0, 113, 133, 0.5);
+    outline: none;
+}
+
+.search-bar button {
+    background-color: #007185;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.search-bar button:hover {
+    background-color: #005f63;
+    transform: scale(1.05);
+}
+
+.search-bar button:active {
+    transform: scale(0.95);
 }
 
 /* Product list layout */
