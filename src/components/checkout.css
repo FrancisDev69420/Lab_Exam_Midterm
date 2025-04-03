@@ -1,0 +1,47 @@
+body {
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+}
+
+
+.payment-options .payment-option input[type="radio"] {
+    display: none; /* Hide the default radio button circle */
+  }
+  
+  .payment-options .payment-option label {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #f8f9fa;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 6px;
+    font-size: 1rem; /* Adjust font size */
+    text-align: center;
+    transition: all 0.3s ease;
+    width: 100px; /* Fixed width */
+    height: 60px; /* Fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .payment-options .payment-option input[type="radio"]:checked + label {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  .payment-options .payment-option label:hover {
+    background-color: #f1f1f1;
+    border-color: #007bff;
+  }
+  
+  /* Style for the container to keep payment options in one line */
+  .payment-options {
+    display: flex;
+    justify-content: flex-start; /* Align items to the start */
+    align-items: center;
+    gap: 15px; /* Space between options */
+    margin-top: 10px;
+  }
+  
