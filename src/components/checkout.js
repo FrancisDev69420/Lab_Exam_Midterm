@@ -4,7 +4,7 @@ import { FaUserAlt, FaEnvelope, FaMapMarkerAlt, FaCreditCard } from 'react-icons
 import item1Image from '../assets/item1.webp';  // Importing images
 import item2Image from '../assets/item2.png';
 import item3Image from '../assets/item3.png';
-import '../components/checkout.css';
+import '../../styles/checkout.css';
 
 const CheckoutPage = () => {
   const [item1Quantity, setItem1Quantity] = useState(2);

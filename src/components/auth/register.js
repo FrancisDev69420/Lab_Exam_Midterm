@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, InputGroup } from 'react-bootstrap';
 import { FaUserAlt, FaEnvelope, FaLock, FaLockOpen } from 'react-icons/fa'; // Importing icons
-import '../register.css'; 
+import '../../styles/register.css'; 
 import api from '../../api'; // Axios instance
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate for redirection
 
