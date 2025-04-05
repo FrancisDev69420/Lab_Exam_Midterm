@@ -12,8 +12,8 @@ function App() {
         <Route path="/" element={<Navigate to="/auth/login" />} />
 
         {/* Admin Routes - protected */}
-        <Route path="/admin/product-list" element={<PrivateRoute element={<ProductList />} />} />
-        <Route path="/admin/checkout-monitoring" element={<PrivateRoute element={<CheckoutMonitoring />} />} />
+        <Route path="/admin/ProductList" element={<ProductList />}  />
+        <Route path="/admin/CheckoutMonitoring" element={<PrivateRoute element={<CheckoutMonitoring />} />} />
 
         {/* Auth Routes */}
         <Route path="/auth/login" element={<Login />} />
