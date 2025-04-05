@@ -1,30 +1,23 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ProductList from './components/admin/ProductList';
-import CheckoutMonitor from './components/admin/CheckoutMonitor';
-import Storefront from './components/customer/Storefront';
-import Cart from './components/customer/Cart';
-import Checkout from './components/customer/Checkout';
-import OrderSummary from './components/customer/OrderSummary';
+import CheckoutMonitoring from './components/admin/CheckoutMonitoring';
 import Login from './components/auth/Login';
-import Register from './components/auth/Register';
+import Register from './components/auth/register';
+import PrivateRoute from './components/PrivateRoute'; // A custom route guard
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Admin routes */}
-        <Route path="/admin/products" element={<ProductList />} />
-        <Route path="/admin/monitor" element={<CheckoutMonitor />} />
+        <Route path="/" element={<Navigate to="/auth/login" />} />
 
-        {/* Customer routes */}
-        <Route path="/" element={<Storefront />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/summary" element={<OrderSummary />} />
+        {/* Admin Routes - protected */}
+        <Route path="/admin/product-list" element={<PrivateRoute element={<ProductList />} />} />
+        <Route path="/admin/checkout-monitoring" element={<PrivateRoute element={<CheckoutMonitoring />} />} />
 
-        {/* Auth */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* Auth Routes */}
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
       </Routes>
     </Router>
   );

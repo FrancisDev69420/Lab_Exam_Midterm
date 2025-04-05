@@ -8,22 +8,22 @@ const CheckoutMonitoring = () => {
     const [selectedCheckout, setSelectedCheckout] = useState(null);
     const [filterDate, setFilterDate] = useState('');
 
-    
-    const fetchCheckouts = async () => {
-        let url = '/checkouts';
-        if (filterDate) {
-            url += `?date=${filterDate}`;
-        }
-        try {
-            const response = await api.get(url);
-            setCheckOuts(response.data);
-        } catch (error) {
-            console.error('Error fetching checkouts:', error);
-        }
-    };
-
     //Fetch checkouts when the component mounts 
     useEffect(() => {
+
+        const fetchCheckouts = async () => {
+            let url = '/checkouts';
+            if (filterDate) {
+                url += `?date=${filterDate}`;
+            }
+            try {
+                const response = await api.get(url);
+                setCheckOuts(response.data);
+            } catch (error) {
+                console.error('Error fetching checkouts:', error);
+            }
+        };
+
         fetchCheckouts();
     }, [filterDate]);
 
@@ -105,3 +105,5 @@ const CheckoutMonitoring = () => {
     );
     
 }
+
+export default CheckoutMonitoring;

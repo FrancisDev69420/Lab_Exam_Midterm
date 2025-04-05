@@ -1,8 +1,6 @@
-
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { Modal, Button, Form, Table } from "react-bootstrap";
-
 
 const ProductList = () => {
     // State to hold the list of products
@@ -66,13 +64,13 @@ const ProductList = () => {
             }
             setShowModal(false);
             fetchProducts();
-            resetform();
+            resetForm();
         } catch (error) {
             console.error("Error saving product:", error);
         }
-    }
+    };
 
-    const resetform = () => {
+    const resetForm = () => {
         setProductForm({
             name: "",
             description: "",
@@ -81,8 +79,7 @@ const ProductList = () => {
             image: "",
         });
         setIsEditing(false);
-        setIsEditingId(null);
-    }
+    };
 
     const handleEdit = (product) => {
         // Set the product data to the form state for editing
@@ -102,10 +99,12 @@ const ProductList = () => {
         }
     };
 
-    return(
+    return (
         <div className="container mt-5">
             <h2>Product List</h2>
-            <Button variant="primary" onClick={() => setShowModal(true)}>Add Product</Button>
+            <Button variant="primary" onClick={() => setShowModal(true)}>
+                Add Product
+            </Button>
             <Table striped bordered hover className="mt-3">
                 <thead>
                     <tr>
@@ -126,8 +125,18 @@ const ProductList = () => {
                             <td>{product.price}</td>
                             <td>{product.stock}</td>
                             <td>
-                                <Button variant="warning" onClick={() => handleEdit(product)}>Edit</Button>{" "}
-                                <Button variant="danger" onClick={() => handleDelete(product.id)}>Delete</Button>
+                                <Button
+                                    variant="warning"
+                                    onClick={() => handleEdit(product)}
+                                >
+                                    Edit
+                                </Button>{" "}
+                                <Button
+                                    variant="danger"
+                                    onClick={() => handleDelete(product.id)}
+                                >
+                                    Delete
+                                </Button>
                             </td>
                         </tr>
                     ))}
@@ -142,43 +151,68 @@ const ProductList = () => {
                     </Modal.Header>
 
                     <Modal.Body>
-                    
                         <Form.Group>
                             <Form.Label>Name</Form.Label>
-                            <Form.Control name="name" value={form.name} onChange={handleChange} required />
+                            <Form.Control
+                                name="name"
+                                value={productForm.name}
+                                onChange={handleInputChange}
+                                required
+                            />
                         </Form.Group>
 
-                        
                         <Form.Group>
                             <Form.Label>Description</Form.Label>
-                            <Form.Control name="description" value={form.description} onChange={handleChange} required />
+                            <Form.Control
+                                name="description"
+                                value={productForm.description}
+                                onChange={handleInputChange}
+                                required
+                            />
                         </Form.Group>
 
-                        
                         <Form.Group>
                             <Form.Label>Price</Form.Label>
-                            <Form.Control type="number" name="price" value={form.price} onChange={handleChange} required />
+                            <Form.Control
+                                type="number"
+                                name="price"
+                                value={productForm.price}
+                                onChange={handleInputChange}
+                                required
+                            />
                         </Form.Group>
 
-                        
                         <Form.Group>
                             <Form.Label>Stock</Form.Label>
-                            <Form.Control type="number" name="stock" value={form.stock} onChange={handleChange} required />
+                            <Form.Control
+                                type="number"
+                                name="stock"
+                                value={productForm.stock}
+                                onChange={handleInputChange}
+                                required
+                            />
                         </Form.Group>
 
                         <Form.Group>
                             <Form.Label>Image</Form.Label>
-                            <Form.Control type="file" name="image" onChange={handleChange} />
+                            <Form.Control
+                                type="file"
+                                name="image"
+                                onChange={handleInputChange}
+                            />
                         </Form.Group>
-
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-                        <Button type="submit" variant="primary">{isEditing ? 'Update' : 'Save'}</Button>
+                        <Button variant="secondary" onClick={() => setShowModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" variant="primary">
+                            {isEditing ? "Update" : "Save"}
+                        </Button>
                     </Modal.Footer>
                 </form>
-             </Modal>
+            </Modal>
         </div>
     );
 };
