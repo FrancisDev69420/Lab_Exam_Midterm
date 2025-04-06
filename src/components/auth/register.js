@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 
@@ -7,13 +6,6 @@ const API_BASE_URL = 'http://localhost:8000'; // Your Laravel backend URL
 
 const Register = () => {
   const navigate = useNavigate();
-=======
-import { Form, Button, InputGroup } from 'react-bootstrap';
-import { FaUserAlt, FaEnvelope, FaLock, FaLockOpen } from 'react-icons/fa'; // Importing icons
-import '../../styles/register.css'; 
-import api from '../../api'; // Axios instance
-import { useNavigate } from 'react-router-dom'; // Importing useNavigate for redirection
->>>>>>> ceae7be4d6e1dd068c45e48c3652dd6fee42fe8d
 
   const [formData, setFormData] = useState({
     name: '',
@@ -38,38 +30,43 @@ import { useNavigate } from 'react-router-dom'; // Importing useNavigate for red
     setErrors({});
     setMessage('');
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          password_confirmation: formData.password_confirmation,
-        }),
-      });
+    if(formData.password==formData.password_confirmation){
+        try {
+        const response = await fetch(`${API_BASE_URL}/api/register`, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            role: 'customer',
+            }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        setMessage('Registration successful! Redirecting...');
-        setTimeout(() => {
-          navigate('/auth/login');
-        }, 1500);
-      } else if (response.status === 422) {
-        // Validation errors returned by Laravel
-        setErrors(data.errors || {});
-      } else {
-        setMessage('Registration failed. Try again.');
-      }
-    } catch (err) {
-      console.error('Error:', err);
-      setMessage('Failed to connect to the server.');
+        if (response.ok) {
+            setMessage('Registration successful! Redirecting...');
+            setTimeout(() => {
+            navigate('/auth/login');
+            }, 1500);
+        } else if (response.status === 422) {
+            // Validation errors returned by Laravel
+            setErrors(data.errors || {});
+        } else {
+            setMessage('Registration failed. Try again.');
+        }
+        } catch (err) {
+            console.error('Error:', err);
+            setMessage('Failed to connect to the server.');
+        }
+    }else{
+        setErrors('Password not matched. Try again.');
     }
+    
   };
 
   return (
