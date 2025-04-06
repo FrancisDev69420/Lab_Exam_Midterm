@@ -30,7 +30,7 @@ const Register = () => {
     setErrors({});
     setMessage('');
 
-    if(formData.password==formData.password_confirmation){
+    if(formData.password===formData.password_confirmation){
         try {
             const response = await fetch(`${API_BASE_URL}/api/register`, {
                 method: 'POST',
@@ -63,7 +63,7 @@ const Register = () => {
             setMessage('Failed to connect to the server.');
         }
     }else{
-        setErrors('Password not matched. Try again.');
+        alert('Password not matched. Try again.');
     }
     
   };
