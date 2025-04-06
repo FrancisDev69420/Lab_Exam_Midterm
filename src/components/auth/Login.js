@@ -29,7 +29,7 @@ const Login = () => {
         localStorage.setItem('token', data.token);
 
         // Check user role and navigate accordingly
-        if (data.user.role === 'employee') {
+        if (data.role === 'employee') {
           navigate('/admin/AdminPanel'); // Redirect to admin panel for employee
         } else {
           navigate('/store'); // Redirect to store for regular user
