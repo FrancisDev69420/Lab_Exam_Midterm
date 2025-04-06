@@ -1,1 +1,23 @@
-node_modules
+# Node modules
+node_modules/
+
+# Build output
+build/
+dist/
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# Temporary files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# Yarn or npm lock file
+yarn.lock
+package-lock.json

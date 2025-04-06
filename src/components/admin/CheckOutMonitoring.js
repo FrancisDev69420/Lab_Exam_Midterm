@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../api'; // Axios instance
 import { Table, Button, Modal, Form } from 'react-bootstrap';
+
+const API_BASE_URL = 'http://localhost:8000'; // Your backend URL
 
 const CheckoutMonitoring = () => {
     const [checkout, setCheckOuts] = useState([]);
@@ -8,17 +9,29 @@ const CheckoutMonitoring = () => {
     const [selectedCheckout, setSelectedCheckout] = useState(null);
     const [filterDate, setFilterDate] = useState('');
 
-    //Fetch checkouts when the component mounts 
+    // Fetch checkouts when the component mounts
     useEffect(() => {
-
         const fetchCheckouts = async () => {
-            let url = '/checkouts';
+            let url = `${API_BASE_URL}/api/checkouts`; 
             if (filterDate) {
-                url += `?date=${filterDate}`;
+                url = `${API_BASE_URL}/api/checkouts/filter/${filterDate}`;
             }
+
             try {
-                const response = await api.get(url);
-                setCheckOuts(response.data);
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setCheckOuts(data);
+                } else {
+                    console.error('Failed to fetch checkouts:', response.statusText);
+                }
             } catch (error) {
                 console.error('Error fetching checkouts:', error);
             }
@@ -32,7 +45,7 @@ const CheckoutMonitoring = () => {
         setShowModal(true);
     };
 
-    return(
+    return (
         <div className="container mt-5">
             <h2>Checkout Monitoring</h2>
             <Form.Group controlId="filterDate" className="mb-3">
@@ -78,19 +91,19 @@ const CheckoutMonitoring = () => {
                     <Modal.Body>
                         {selectedCheckout && (
                             <>
-                            <p><strong>Customer:</strong> {selectedCheckout.customer}</p>
-                            <p><strong>Date:</strong> {new Date(selectedCheckout.created_at).toLocaleString()}</p>
-                            <hr />
-                            <h6>Items:</h6>
-                            <ul>
-                                {selectedCheckout.items.map((item, index) => (
-                                <li key={index}>
-                                    {item.product_name} — {item.quantity} x ₱{item.price}
-                                </li>
-                                ))}
-                            </ul>
-                            <hr />
-                            <p><strong>Total:</strong> ₱{selectedCheckout.total_price}</p>
+                                <p><strong>Customer:</strong> {selectedCheckout.customer}</p>
+                                <p><strong>Date:</strong> {new Date(selectedCheckout.created_at).toLocaleString()}</p>
+                                <hr />
+                                <h6>Items:</h6>
+                                <ul>
+                                    {selectedCheckout.items.map((item, index) => (
+                                        <li key={index}>
+                                            {item.product_name} — {item.quantity} x ₱{item.price}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <hr />
+                                <p><strong>Total:</strong> ₱{selectedCheckout.total_price}</p>
                             </>
                         )}
                     </Modal.Body>
@@ -101,9 +114,12 @@ const CheckoutMonitoring = () => {
                     </Modal.Footer>
                 </Modal>
             )}
+
+            <Button variant="secondary" onClick={() => window.history.back()} className="mt-4">
+                Back To Product List
+            </Button>
         </div>
     );
-    
-}
+};
 
 export default CheckoutMonitoring;

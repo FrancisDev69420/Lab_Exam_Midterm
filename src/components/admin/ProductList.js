@@ -1,220 +1,234 @@
 import React, { useEffect, useState } from "react";
-import api from "../../api";
 import { Modal, Button, Form, Table } from "react-bootstrap";
 
+const API_BASE_URL = "http://localhost:8000/api"; // Adjust if needed
+
 const ProductList = () => {
-    // State to hold the list of products
-    const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
-    // State for showing/hiding the modal
-    const [showModal, setShowModal] = useState(false);
+  const [productForm, setProductForm] = useState({
+    name: "",
+    description: "",
+    price: "",
+    stock: "",
+    image: "",
+  });
 
-    // State for the product being edited
-    const [isEditing, setIsEditing] = useState(false);
+  // Fetch products from backend
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/products`, {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
-    // State for the product form data
-    const [productForm, setProductForm] = useState({
-        name: "",
-        description: "",
-        price: "",
-        stock: "",
-        image: "",
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+    setProductForm({ ...productForm, [name]: files ? files[0] : value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    for (const key in productForm) {
+      formData.append(key, productForm[key]);
+    }
+
+    try {
+      const token = localStorage.getItem("token"); 
+
+      const response = await fetch(
+        `${API_BASE_URL}/products${isEditing ? `/${productForm.id}` : ""}`,
+        {
+          method: isEditing ? "POST" : "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to save product");
+      }
+
+      setShowModal(false);
+      fetchProducts();
+      resetForm();
+    } catch (error) {
+      console.error("Error saving product:", error);
+    }
+  };
+
+  const resetForm = () => {
+    setProductForm({
+      name: "",
+      description: "",
+      price: "",
+      stock: "",
+      image: "",
     });
+    setIsEditing(false);
+  };
 
-    // Fetch products from the API
-    const fetchProducts = async () => {
-        try {
-            const response = await api.get("/products");
-            setProducts(response.data);
-        } catch (error) {
-            console.error("Error fetching products:", error);
-        }
-    };
+  const handleEdit = (product) => {
+    setProductForm(product);
+    setIsEditing(true);
+    setShowModal(true);
+  };
 
-    // Run fetchProducts when the component mounts
-    useEffect(() => {
-        fetchProducts();
-    }, []);
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
 
-    // Handle form input changes
-    const handleInputChange = (e) => {
-        const { name, value, files } = e.target;
-        setProductForm({ ...productForm, [name]: files ? files[0] : value });
-    };
+      await fetch(`${API_BASE_URL}/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const handleSubmit = async (e) => {
-        // Prevent the default form submission behavior
-        e.preventDefault();
+      fetchProducts();
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
 
-        // Create a FormData object to send the form data as multipart/form-data
-        const formData = new FormData();
+  return (
+    <div className="container mt-5">
+      <h2>Product List</h2>
+      <Button variant="primary" onClick={() => setShowModal(true)}>
+        Add Product
+      </Button>
+      <Table striped bordered hover className="mt-3">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.length > 0 ? (
+            products.map((product) => (
+              <tr key={product.id}>
+                <td>{product.id}</td>
+                <td>{product.name}</td>
+                <td>{product.description}</td>
+                <td>{product.price}</td>
+                <td>{product.stock}</td>
+                <td>
+                  <Button
+                    variant="warning"
+                    onClick={() => handleEdit(product)}
+                    className="me-2"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDelete(product.id)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="6" className="text-center">
+                No products found.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
 
-        // Append each field in the productForm state to the FormData object
-        for (const key in productForm) {
-            formData.append(key, productForm[key]);
-        }
+      {/* Modal for Add/Edit Product */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
+        <form onSubmit={handleSubmit}>
+          <Modal.Header closeButton>
+            <Modal.Title>{isEditing ? "Edit Product" : "Add Product"}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group>
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                name="name"
+                value={productForm.name}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
 
-        try {
-            if (isEditing) {
-                // If editing, send a PUT request to update the product
-                await api.put(`/products/${productForm.id}`, formData);
-            } else {
-                // If adding a new product, send a POST request
-                await api.post("/products", formData);
-            }
-            setShowModal(false);
-            fetchProducts();
-            resetForm();
-        } catch (error) {
-            console.error("Error saving product:", error);
-        }
-    };
+            <Form.Group>
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                name="description"
+                value={productForm.description}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
 
-    const resetForm = () => {
-        setProductForm({
-            name: "",
-            description: "",
-            price: "",
-            stock: "",
-            image: "",
-        });
-        setIsEditing(false);
-    };
+            <Form.Group>
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                type="number"
+                name="price"
+                value={productForm.price}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
 
-    const handleEdit = (product) => {
-        // Set the product data to the form state for editing
-        setProductForm(product);
-        // Set the editing state to true
-        setIsEditing(true);
-        // Show the modal
-        setShowModal(true);
-    };
+            <Form.Group>
+              <Form.Label>Stock</Form.Label>
+              <Form.Control
+                type="number"
+                name="stock"
+                value={productForm.stock}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
 
-    const handleDelete = async (id) => {
-        try {
-            await api.delete(`/products/${id}`);
-            fetchProducts();
-        } catch (error) {
-            console.error("Error deleting product:", error);
-        }
-    };
-
-    return (
-        <div className="container mt-5">
-            <h2>Product List</h2>
-            <Button variant="primary" onClick={() => setShowModal(true)}>
-                Add Product
+            <Form.Group>
+              <Form.Label>Image</Form.Label>
+              <Form.Control type="file" name="image" onChange={handleInputChange} />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Cancel
             </Button>
-            <Table striped bordered hover className="mt-3">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {products.map((product) => (
-                        <tr key={product.id}>
-                            <td>{product.id}</td>
-                            <td>{product.name}</td>
-                            <td>{product.description}</td>
-                            <td>{product.price}</td>
-                            <td>{product.stock}</td>
-                            <td>
-                                <Button
-                                    variant="warning"
-                                    onClick={() => handleEdit(product)}
-                                >
-                                    Edit
-                                </Button>{" "}
-                                <Button
-                                    variant="danger"
-                                    onClick={() => handleDelete(product.id)}
-                                >
-                                    Delete
-                                </Button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
-
-            {/* Modal for adding/editing products */}
-            <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
-                <form onSubmit={handleSubmit}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>{isEditing ? "Edit Product" : "Add Product"}</Modal.Title>
-                    </Modal.Header>
-
-                    <Modal.Body>
-                        <Form.Group>
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control
-                                name="name"
-                                value={productForm.name}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </Form.Group>
-
-                        <Form.Group>
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                name="description"
-                                value={productForm.description}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </Form.Group>
-
-                        <Form.Group>
-                            <Form.Label>Price</Form.Label>
-                            <Form.Control
-                                type="number"
-                                name="price"
-                                value={productForm.price}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </Form.Group>
-
-                        <Form.Group>
-                            <Form.Label>Stock</Form.Label>
-                            <Form.Control
-                                type="number"
-                                name="stock"
-                                value={productForm.stock}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </Form.Group>
-
-                        <Form.Group>
-                            <Form.Label>Image</Form.Label>
-                            <Form.Control
-                                type="file"
-                                name="image"
-                                onChange={handleInputChange}
-                            />
-                        </Form.Group>
-                    </Modal.Body>
-
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button type="submit" variant="primary">
-                            {isEditing ? "Update" : "Save"}
-                        </Button>
-                    </Modal.Footer>
-                </form>
-            </Modal>
-        </div>
-    );
+            <Button type="submit" variant="primary">
+              {isEditing ? "Update" : "Save"}
+            </Button>
+          </Modal.Footer>
+        </form>
+      </Modal>
+    </div>
+  );
 };
 
 export default ProductList;

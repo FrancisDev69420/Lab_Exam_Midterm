@@ -1,164 +1,146 @@
 import React, { useState } from 'react';
-import { Form, Button, InputGroup } from 'react-bootstrap';
-import { FaUserAlt, FaEnvelope, FaLock, FaLockOpen } from 'react-icons/fa'; // Importing icons
-import '../register.css'; 
-import api from '../../api'; // Axios instance
-import { useNavigate } from 'react-router-dom'; // Importing useNavigate for redirection
+import { useNavigate } from 'react-router-dom';
+import { Form, Button, Container, Alert } from 'react-bootstrap';
 
-function Register() {
+const API_BASE_URL = 'http://localhost:8000'; // Your Laravel backend URL
+
+const Register = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    confirmPassword: '',
+    password_confirmation: ''
   });
 
-  const [errors, setErrors] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState('');
 
-  const navigate = useNavigate(); // Initialize useNavigate
-
-  // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  // Form validation
-  const validateForm = () => {
-    let formErrors = {};
-    if (!formData.name) formErrors.name = 'Name is required';
-    if (!formData.email) formErrors.email = 'Email is required';
-    if (!formData.password) formErrors.password = 'Password is required';
-    if (formData.password !== formData.confirmPassword)
-      formErrors.confirmPassword = 'Passwords do not match';
-
-    setErrors(formErrors);
-    return Object.keys(formErrors).length === 0;
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!validateForm()) return;
-  try {
-    await api.post('/register', {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      password_confirmation: formData.confirmPassword
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
     });
+  };
 
-    alert('Registration successful! Please login.');
-    navigate('/login');
-  } catch (err) {
-      const backendErrors = err.response?.data?.errors;
-      if (backendErrors) {
-        setErrors({
-          name: backendErrors.name?.[0] || '',
-          email: backendErrors.email?.[0] || '',
-          password: backendErrors.password?.[0] || '',
-          confirmPassword: '',
-        });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('Form is submitting...');
+    setErrors({});
+    setMessage('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          password_confirmation: formData.password_confirmation,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('Registration successful! Redirecting...');
+        setTimeout(() => {
+          navigate('/auth/login');
+        }, 1500);
+      } else if (response.status === 422) {
+        // Validation errors returned by Laravel
+        setErrors(data.errors || {});
       } else {
-        alert('Registration failed. Please try again.');
+        setMessage('Registration failed. Try again.');
       }
+    } catch (err) {
+      console.error('Error:', err);
+      setMessage('Failed to connect to the server.');
     }
   };
 
-
-
   return (
-    <div className="container">
-      <h2>Create Account</h2>
+    <Container style={{ maxWidth: '500px' }} className="mt-5">
+      <h3 className="mb-4">Create an Account</h3>
+
+      {message && <Alert variant="success">{message}</Alert>}
+
       <Form onSubmit={handleSubmit}>
-        {/* Name Input */}
-        <Form.Group className="mb-4">
-          <Form.Label className="form-label">Full Name</Form.Label>
-          <InputGroup>
-            <InputGroup.Text><FaUserAlt /></InputGroup.Text>
-            <Form.Control
-              type="text"
-              placeholder="Enter your full name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              isInvalid={errors.name}
-            />
-          </InputGroup>
-          <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+        {/* Name */}
+        <Form.Group className="mb-3">
+          <Form.Label>Name</Form.Label>
+          <Form.Control 
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            isInvalid={!!errors.name}
+            required
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.name}
+          </Form.Control.Feedback>
         </Form.Group>
 
-        {/* Email Input */}
-        <Form.Group className="mb-4">
-          <Form.Label className="form-label">Email address</Form.Label>
-          <InputGroup>
-            <InputGroup.Text><FaEnvelope /></InputGroup.Text>
-            <Form.Control
-              type="email"
-              placeholder="Enter your email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              isInvalid={errors.email}
-            />
-          </InputGroup>
-          <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
+        {/* Email */}
+        <Form.Group className="mb-3">
+          <Form.Label>Email</Form.Label>
+          <Form.Control 
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            isInvalid={!!errors.email}
+            required
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.email}
+          </Form.Control.Feedback>
         </Form.Group>
 
-        {/* Password Input */}
-        <Form.Group className="mb-4">
-          <Form.Label className="form-label">Password</Form.Label>
-          <InputGroup>
-            <InputGroup.Text><FaLock /></InputGroup.Text>
-            <Form.Control
-              type="password"
-              placeholder="Create a password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              isInvalid={errors.password}
-            />
-          </InputGroup>
-          <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+        {/* Password */}
+        <Form.Group className="mb-3">
+          <Form.Label>Password</Form.Label>
+          <Form.Control 
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            isInvalid={!!errors.password}
+            required
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.password}
+          </Form.Control.Feedback>
         </Form.Group>
 
-        {/* Confirm Password Input */}
-        <Form.Group className="mb-4">
-          <Form.Label className="form-label">Confirm Password</Form.Label>
-          <InputGroup>
-            <InputGroup.Text><FaLockOpen /></InputGroup.Text>
-            <Form.Control
-              type="password"
-              placeholder="Confirm your password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              isInvalid={errors.confirmPassword}
-            />
-          </InputGroup>
-          <Form.Control.Feedback type="invalid">{errors.confirmPassword}</Form.Control.Feedback>
+        {/* Confirm Password */}
+        <Form.Group className="mb-3">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control 
+            type="password"
+            name="password_confirmation"
+            value={formData.password_confirmation}
+            onChange={handleChange}
+            isInvalid={!!errors.password_confirmation}
+            required
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.password_confirmation}
+          </Form.Control.Feedback>
         </Form.Group>
 
-        {/* Submit Button */}
-        <Button variant="primary" type="submit" className="btn">
+        <Button variant="primary" type="submit">
           Register
         </Button>
-
-        {/* Already have an account */}
-        <p className="text-muted text-center mt-4">
-          Already have an account? <a href="/auth/login">Login here</a>
-        </p>
       </Form>
-    </div>
+    </Container>
   );
-}
+};
 
 export default Register;
