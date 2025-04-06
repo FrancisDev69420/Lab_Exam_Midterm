@@ -16,14 +16,12 @@ class AuthController extends Controller
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'role' => 'required|in:employee,customer'
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role
         ]);
 
         return response()->json(['message' => 'User registered successfully'], 201);
@@ -44,7 +42,12 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $user->createToken('authToken')->plainTextToken,
-            'role' => $user->role
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ]
         ]);
     }
 
