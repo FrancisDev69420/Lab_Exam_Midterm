@@ -32,33 +32,32 @@ const Register = () => {
 
     if(formData.password==formData.password_confirmation){
         try {
-        const response = await fetch(`${API_BASE_URL}/api/register`, {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-            role: 'customer',
-            }),
-        });
+            const response = await fetch(`${API_BASE_URL}/api/register`, {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                name: formData.name,
+                email: formData.email,
+                password: formData.password
+                }),
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (response.ok) {
-            setMessage('Registration successful! Redirecting...');
-            setTimeout(() => {
-            navigate('/auth/login');
-            }, 1500);
-        } else if (response.status === 422) {
-            // Validation errors returned by Laravel
-            setErrors(data.errors || {});
-        } else {
-            setMessage('Registration failed. Try again.');
-        }
+            if (response.ok) {
+                setMessage('Registration successful! Redirecting...');
+                setTimeout(() => {
+                navigate('/auth/login');
+                }, 1500);
+            } else if (response.status === 422) {
+                // Validation errors returned by Laravel
+                setErrors(data.errors || {});
+            } else {
+                setMessage('Registration failed. Try again.');
+            }
         } catch (err) {
             console.error('Error:', err);
             setMessage('Failed to connect to the server.');
