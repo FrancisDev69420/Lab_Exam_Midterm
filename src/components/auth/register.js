@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 
@@ -6,6 +7,13 @@ const API_BASE_URL = 'http://localhost:8000'; // Your Laravel backend URL
 
 const Register = () => {
   const navigate = useNavigate();
+=======
+import { Form, Button, InputGroup } from 'react-bootstrap';
+import { FaUserAlt, FaEnvelope, FaLock, FaLockOpen } from 'react-icons/fa'; // Importing icons
+import '../../styles/register.css'; 
+import api from '../../api'; // Axios instance
+import { useNavigate } from 'react-router-dom'; // Importing useNavigate for redirection
+>>>>>>> ceae7be4d6e1dd068c45e48c3652dd6fee42fe8d
 
   const [formData, setFormData] = useState({
     name: '',
