@@ -17,26 +17,20 @@ const CheckoutMonitoring = () => {
     // Stores the selected date for filtering checkouts
     const [filterDate, setFilterDate] = useState('');
 
-<<<<<<< HEAD
     useEffect(() => {
         const fetchCheckouts = async () => {
             let url = `${API_BASE_URL}/api/checkouts`;
-=======
-    // Fetch checkouts from the API when the component mounts or filterDate changes
-    useEffect(() => {
-        const fetchCheckouts = async () => {
-            // Use filtered endpoint if a date is selected
-            let url = `${API_BASE_URL}/api/checkouts`; 
->>>>>>> 191ea110b7fbf7e106416b48dc2276d6c7d22949
             if (filterDate) {
                 url = `${API_BASE_URL}/api/checkouts/filter/${filterDate}`;
             }
 
+            const token = localStorage.getItem('token');
             try {
                 // Send GET request to fetch checkouts
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
                     },
@@ -64,7 +58,6 @@ const CheckoutMonitoring = () => {
     };
 
     return (
-<<<<<<< HEAD
         <div
             style={{
                 backgroundImage: `url(${backgroundImage})`,
@@ -104,10 +97,6 @@ const CheckoutMonitoring = () => {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Customer</th>
-                            <th>Total Amount</th>
-                            <th>Date</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,9 +104,6 @@ const CheckoutMonitoring = () => {
                             checkout.map((checkout) => (
                                 <tr key={checkout.id}>
                                     <td>{checkout.id}</td>
-                                    <td>{checkout.customer}</td>
-                                    <td>₱{checkout.total_price}</td>
-                                    <td>{new Date(checkout.created_at).toLocaleString()}</td>
                                     <td>
                                         <Button
                                             variant="info"
@@ -135,77 +121,10 @@ const CheckoutMonitoring = () => {
                                     No checkouts found.
                                 </td>
                             </tr>
-=======
-        <div className="container mt-5">
-            <h2>Checkout Monitoring</h2>
-
-            {/* Filter by Date Input */}
-            <Form.Group controlId="filterDate" className="mb-3">
-                <Form.Label>Filter by Date</Form.Label>
-                <Form.Control
-                    type="date"
-                    value={filterDate}
-                    onChange={(e) => setFilterDate(e.target.value)}
-                />
-            </Form.Group>
-
-            {/* Table displaying list of checkouts */}
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Customer</th>
-                        <th>Total Amount</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {checkout.map((checkout) => (
-                        <tr key={checkout.id}>
-                            <td>{checkout.id}</td>
-                            <td>{checkout.customer}</td>
-                            <td>{checkout.total_price}</td>
-                            <td>{new Date(checkout.created_at).toLocaleString()}</td>
-                            <td>
-                                <Button variant="info" onClick={() => viewCheckout(checkout)}>
-                                    View
-                                </Button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
-
-            {/* Modal to show selected checkout details */}
-            {selectedCheckout && (
-                <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-                    <Modal.Header closeButton>
-                        <Modal.Title>Checkout Details</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {selectedCheckout && (
-                            <>
-                                <p><strong>Customer:</strong> {selectedCheckout.customer}</p>
-                                <p><strong>Date:</strong> {new Date(selectedCheckout.created_at).toLocaleString()}</p>
-                                <hr />
-                                <h6>Items:</h6>
-                                <ul>
-                                    {selectedCheckout.items.map((item, index) => (
-                                        <li key={index}>
-                                            {item.product_name} — {item.quantity} x ₱{item.price}
-                                        </li>
-                                    ))}
-                                </ul>
-                                <hr />
-                                <p><strong>Total:</strong> ₱{selectedCheckout.total_price}</p>
-                            </>
->>>>>>> 191ea110b7fbf7e106416b48dc2276d6c7d22949
                         )}
                     </tbody>
                 </Table>
 
-<<<<<<< HEAD
                 {selectedCheckout && (
                     <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
                         <Modal.Header closeButton>
@@ -238,12 +157,6 @@ const CheckoutMonitoring = () => {
                     Back To Product List
                 </Button>
             </div>
-=======
-            {/* Button to go back to the previous page (product list) */}
-            <Button variant="secondary" onClick={() => window.history.back()} className="mt-4">
-                Back To Product List
-            </Button>
->>>>>>> 191ea110b7fbf7e106416b48dc2276d6c7d22949
         </div>
     );
 };
