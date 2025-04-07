@@ -23,11 +23,11 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'product_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg| max:2048', 
+            'image' => 'required|url', 
         ]);
 
         $product = Product::create($validatedData);
@@ -49,11 +49,11 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $validatedData = $request->validate([
-            'product_name' => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|nullable|string',
             'price' => 'sometimes|required|numeric|min:0',
             'stock' => 'sometimes|required|integer|min:0',
-            'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,svg|max:2048', 
+            'image' => 'required|url', 
         ]);
 
         $product->update($validatedData);
@@ -80,9 +80,9 @@ class ProductController extends Controller
 
         $query = Product::query();
 
-        if($request->has('product_name')) {
+        if($request->has('name')) {
 
-            $query->where('product_name', 'like', '%' . $request->product_name . '%');
+            $query->where('name', 'like', '%' . $request->name . '%');
 
         }
 
