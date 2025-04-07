@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
+import backgroundImage from '../../loginRegisterBG.png'; // ✅ Import background image
 
-const API_BASE_URL = 'http://localhost:8000'; // Your Laravel backend URL
+const API_BASE_URL = 'http://localhost:8000';
 
 const Register = () => {
   const navigate = useNavigate();
-=======
-import { Form, Button, InputGroup } from 'react-bootstrap';
-import { FaUserAlt, FaEnvelope, FaLock, FaLockOpen } from 'react-icons/fa'; // Importing icons
-import '../../styles/register.css'; 
-import api from '../../api'; // Axios instance
-import { useNavigate } from 'react-router-dom'; // Importing useNavigate for redirection
->>>>>>> ceae7be4d6e1dd068c45e48c3652dd6fee42fe8d
 
   const [formData, setFormData] = useState({
     name: '',
@@ -34,7 +27,6 @@ import { useNavigate } from 'react-router-dom'; // Importing useNavigate for red
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form is submitting...');
     setErrors({});
     setMessage('');
 
@@ -45,23 +37,15 @@ import { useNavigate } from 'react-router-dom'; // Importing useNavigate for red
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          password_confirmation: formData.password_confirmation,
-        }),
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         setMessage('Registration successful! Redirecting...');
-        setTimeout(() => {
-          navigate('/auth/login');
-        }, 1500);
+        setTimeout(() => navigate('/auth/login'), 1500);
       } else if (response.status === 422) {
-        // Validation errors returned by Laravel
         setErrors(data.errors || {});
       } else {
         setMessage('Registration failed. Try again.');
@@ -73,81 +57,94 @@ import { useNavigate } from 'react-router-dom'; // Importing useNavigate for red
   };
 
   return (
-    <Container style={{ maxWidth: '500px' }} className="mt-5">
-      <h3 className="mb-4">Create an Account</h3>
+    <div
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem',
+      }}
+    >
+      <Container className="bg-white p-5 rounded shadow" style={{ maxWidth: '500px' }}>
+        <h3 className="mb-4 text-center">Create an Account</h3>
 
-      {message && <Alert variant="success">{message}</Alert>}
+        {message && <Alert variant="success">{message}</Alert>}
 
-      <Form onSubmit={handleSubmit}>
-        {/* Name */}
-        <Form.Group className="mb-3">
-          <Form.Label>Name</Form.Label>
-          <Form.Control 
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            isInvalid={!!errors.name}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            {errors.name}
-          </Form.Control.Feedback>
-        </Form.Group>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control 
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              isInvalid={!!errors.name}
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.name}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-        {/* Email */}
-        <Form.Group className="mb-3">
-          <Form.Label>Email</Form.Label>
-          <Form.Control 
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            isInvalid={!!errors.email}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            {errors.email}
-          </Form.Control.Feedback>
-        </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Email</Form.Label>
+            <Form.Control 
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              isInvalid={!!errors.email}
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.email}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-        {/* Password */}
-        <Form.Group className="mb-3">
-          <Form.Label>Password</Form.Label>
-          <Form.Control 
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            isInvalid={!!errors.password}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            {errors.password}
-          </Form.Control.Feedback>
-        </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Password</Form.Label>
+            <Form.Control 
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              isInvalid={!!errors.password}
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.password}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-        {/* Confirm Password */}
-        <Form.Group className="mb-3">
-          <Form.Label>Confirm Password</Form.Label>
-          <Form.Control 
-            type="password"
-            name="password_confirmation"
-            value={formData.password_confirmation}
-            onChange={handleChange}
-            isInvalid={!!errors.password_confirmation}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            {errors.password_confirmation}
-          </Form.Control.Feedback>
-        </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control 
+              type="password"
+              name="password_confirmation"
+              value={formData.password_confirmation}
+              onChange={handleChange}
+              isInvalid={!!errors.password_confirmation}
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.password_confirmation}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Register
-        </Button>
-      </Form>
-    </Container>
+          <Button variant="primary" type="submit" className="w-100">
+            Register
+          </Button>
+        </Form>
+
+        <p className="mt-3 text-center">
+          Already have an account? <a href="/auth/login">Login here</a>
+        </p>
+      </Container>
+    </div>
   );
 };
 

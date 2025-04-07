@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import backgroundImage from '../../loginRegisterBG.png'; // Ensure path is correct
 
-const API_BASE_URL = 'http://localhost:8000'; // Your Laravel backend URL
+const API_BASE_URL = 'http://localhost:8000';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -25,14 +26,12 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Save token to local storage after successful login
         localStorage.setItem('token', data.token);
 
-        // Check user role and navigate accordingly
         if (data.user.role === 'employee') {
-          navigate('/admin/AdminPanel'); // Redirect to admin panel for employee
+          navigate('/admin/AdminPanel');
         } else {
-          navigate('/store'); // Redirect to store for regular user
+          navigate('/store');
         }
       } else {
         setError(data.message || 'Login failed');
@@ -44,40 +43,52 @@ const Login = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h1 className="text-center text-primary mb-4">Group 9 Store</h1>
-      <h3 className="text-center">Login</h3>
+    <div
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem',
+      }}
+    >
+      <div className="container bg-white p-5 rounded shadow" style={{ maxWidth: '500px', width: '100%' }}>
+        <h3 className="text-center mb-3">Login</h3>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div className="input-group mb-3">
-          <input
-            className="form-control"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="input-group mb-3">
+            <input
+              className="form-control"
+              name="email"
+              placeholder="Email"
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <div className="input-group mb-3">
-          <input
-            className="form-control"
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className="input-group mb-3">
+            <input
+              className="form-control"
+              type="password"
+              name="password"
+              placeholder="Password"
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <button className="btn btn-primary btn-block">Login</button>
-      </form>
+          <button className="btn btn-primary btn-block w-100">Login</button>
+        </form>
 
-      <p className="mt-3 text-center">
-        Don't have an account? <a href="/auth/register">Register here</a>
-      </p>
+        <p className="mt-3 text-center">
+          Don't have an account? <a href="/auth/register">Register here</a>
+        </p>
+      </div>
     </div>
   );
 };

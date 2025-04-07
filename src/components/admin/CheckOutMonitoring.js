@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form } from 'react-bootstrap';
+import backgroundImage from '../../pageBG.png'; // Adjust path if needed
 
-const API_BASE_URL = 'http://localhost:8000'; // Your backend URL
+const API_BASE_URL = 'http://localhost:8000';
 
 const CheckoutMonitoring = () => {
     const [checkout, setCheckOuts] = useState([]);
@@ -9,10 +10,9 @@ const CheckoutMonitoring = () => {
     const [selectedCheckout, setSelectedCheckout] = useState(null);
     const [filterDate, setFilterDate] = useState('');
 
-    // Fetch checkouts when the component mounts
     useEffect(() => {
         const fetchCheckouts = async () => {
-            let url = `${API_BASE_URL}/api/checkouts`; 
+            let url = `${API_BASE_URL}/api/checkouts`;
             if (filterDate) {
                 url = `${API_BASE_URL}/api/checkouts/filter/${filterDate}`;
             }
@@ -46,78 +46,112 @@ const CheckoutMonitoring = () => {
     };
 
     return (
-        <div className="container mt-5">
-            <h2>Checkout Monitoring</h2>
-            <Form.Group controlId="filterDate" className="mb-3">
-                <Form.Label>Filter by Date</Form.Label>
-                <Form.Control
-                    type="date"
-                    value={filterDate}
-                    onChange={(e) => setFilterDate(e.target.value)}
-                />
-            </Form.Group>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Customer</th>
-                        <th>Total Amount</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {checkout.map((checkout) => (
-                        <tr key={checkout.id}>
-                            <td>{checkout.id}</td>
-                            <td>{checkout.customer}</td>
-                            <td>{checkout.total_price}</td>
-                            <td>{new Date(checkout.created_at).toLocaleString()}</td>
-                            <td>
-                                <Button variant="info" onClick={() => viewCheckout(checkout)}>
-                                    View
-                                </Button>
-                            </td>
+        <div
+            style={{
+                backgroundImage: `url(${backgroundImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                minHeight: '100vh',
+                padding: '2rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
+        >
+            <div
+                style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    borderRadius: '15px',
+                    padding: '2rem',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
+                    maxWidth: '1000px',
+                    width: '100%',
+                }}
+            >
+                <h2 className="mb-4">Checkout Monitoring</h2>
+
+                <Form.Group controlId="filterDate" className="mb-3">
+                    <Form.Label>Filter by Date</Form.Label>
+                    <Form.Control
+                        type="date"
+                        value={filterDate}
+                        onChange={(e) => setFilterDate(e.target.value)}
+                    />
+                </Form.Group>
+
+                <Table striped bordered hover responsive>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Total Amount</th>
+                            <th>Date</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
-
-            {selectedCheckout && (
-                <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-                    <Modal.Header closeButton>
-                        <Modal.Title>Checkout Details</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {selectedCheckout && (
-                            <>
-                                <p><strong>Customer:</strong> {selectedCheckout.customer}</p>
-                                <p><strong>Date:</strong> {new Date(selectedCheckout.created_at).toLocaleString()}</p>
-                                <hr />
-                                <h6>Items:</h6>
-                                <ul>
-                                    {selectedCheckout.items.map((item, index) => (
-                                        <li key={index}>
-                                            {item.product_name} — {item.quantity} x ₱{item.price}
-                                        </li>
-                                    ))}
-                                </ul>
-                                <hr />
-                                <p><strong>Total:</strong> ₱{selectedCheckout.total_price}</p>
-                            </>
+                    </thead>
+                    <tbody>
+                        {checkout.length > 0 ? (
+                            checkout.map((checkout) => (
+                                <tr key={checkout.id}>
+                                    <td>{checkout.id}</td>
+                                    <td>{checkout.customer}</td>
+                                    <td>₱{checkout.total_price}</td>
+                                    <td>{new Date(checkout.created_at).toLocaleString()}</td>
+                                    <td>
+                                        <Button
+                                            variant="info"
+                                            size="sm"
+                                            onClick={() => viewCheckout(checkout)}
+                                        >
+                                            View
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="5" className="text-center">
+                                    No checkouts found.
+                                </td>
+                            </tr>
                         )}
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowModal(false)}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            )}
+                    </tbody>
+                </Table>
 
-            <Button variant="secondary" onClick={() => window.history.back()} className="mt-4">
-                Back To Product List
-            </Button>
+                {selectedCheckout && (
+                    <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
+                        <Modal.Header closeButton>
+                            <Modal.Title>Checkout Details</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <p><strong>Customer:</strong> {selectedCheckout.customer}</p>
+                            <p><strong>Date:</strong> {new Date(selectedCheckout.created_at).toLocaleString()}</p>
+                            <hr />
+                            <h6>Items:</h6>
+                            <ul>
+                                {selectedCheckout.items.map((item, index) => (
+                                    <li key={index}>
+                                        {item.product_name} — {item.quantity} x ₱{item.price}
+                                    </li>
+                                ))}
+                            </ul>
+                            <hr />
+                            <p><strong>Total:</strong> ₱{selectedCheckout.total_price}</p>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={() => setShowModal(false)}>
+                                Close
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                )}
+
+                <Button variant="secondary" onClick={() => window.history.back()} className="mt-3">
+                    Back To Product List
+                </Button>
+            </div>
         </div>
     );
 };
