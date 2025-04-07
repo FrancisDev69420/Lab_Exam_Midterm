@@ -40,7 +40,7 @@ const Register = () => {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+            const data = await response.json();
 
       if (response.ok) {
         setMessage('Registration successful! Redirecting...');
@@ -54,6 +54,7 @@ const Register = () => {
       console.error('Error:', err);
       setMessage('Failed to connect to the server.');
     }
+    
   };
 
   return (

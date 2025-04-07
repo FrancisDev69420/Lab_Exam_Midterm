@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Table } from "react-bootstrap";
 
-const API_BASE_URL = "http://localhost:8000/api"; // Adjust if needed
+const API_BASE_URL = "http://localhost:8000/api"; // Adjust base URL if needed
 
 const ProductList = () => {
+  // State for storing all products
   const [products, setProducts] = useState([]);
+
+  // Modal visibility control
   const [showModal, setShowModal] = useState(false);
+
+  // Flag for editing mode
   const [isEditing, setIsEditing] = useState(false);
 
+  // Form data for creating/updating a product
   const [productForm, setProductForm] = useState({
     name: "",
     description: "",
@@ -16,7 +22,7 @@ const ProductList = () => {
     image: "",
   });
 
-  // Fetch products from backend
+  // Fetch products from backend API
   const fetchProducts = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/products`, {
@@ -25,36 +31,40 @@ const ProductList = () => {
         },
       });
       const data = await response.json();
-      setProducts(data);
+      setProducts(data); // Save fetched products in state
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
 
+  // Fetch products once component mounts
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // Handle input changes for both text and file inputs
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
     setProductForm({ ...productForm, [name]: files ? files[0] : value });
   };
 
+  // Handle form submission for adding/updating a product
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Prepare form data for submission (including image upload)
     const formData = new FormData();
     for (const key in productForm) {
       formData.append(key, productForm[key]);
     }
 
     try {
-      const token = localStorage.getItem("token"); 
+      const token = localStorage.getItem("token"); // Get token for auth
 
       const response = await fetch(
         `${API_BASE_URL}/products${isEditing ? `/${productForm.id}` : ""}`,
         {
-          method: isEditing ? "POST" : "POST",
+          method: "POST", // Change to PUT if needed for editing
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
@@ -67,6 +77,7 @@ const ProductList = () => {
         throw new Error("Failed to save product");
       }
 
+      // Close modal, refresh products, and reset form
       setShowModal(false);
       fetchProducts();
       resetForm();
@@ -75,6 +86,7 @@ const ProductList = () => {
     }
   };
 
+  // Reset form fields
   const resetForm = () => {
     setProductForm({
       name: "",
@@ -86,12 +98,14 @@ const ProductList = () => {
     setIsEditing(false);
   };
 
+  // Populate form with selected product data and show modal for editing
   const handleEdit = (product) => {
     setProductForm(product);
     setIsEditing(true);
     setShowModal(true);
   };
 
+  // Delete a product by ID
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -104,7 +118,7 @@ const ProductList = () => {
         },
       });
 
-      fetchProducts();
+      fetchProducts(); // Refresh product list after deletion
     } catch (error) {
       console.error("Error deleting product:", error);
     }
@@ -113,9 +127,13 @@ const ProductList = () => {
   return (
     <div className="container mt-5">
       <h2>Product List</h2>
+
+      {/* Add Product Button */}
       <Button variant="primary" onClick={() => setShowModal(true)}>
         Add Product
       </Button>
+
+      {/* Product Table */}
       <Table striped bordered hover className="mt-3">
         <thead>
           <tr>

@@ -4,19 +4,23 @@ import { Button, Container } from 'react-bootstrap';
 import ProductList from './ProductList';
 import backgroundImage from '../../pageBG.png';
 
+// Base URL for API calls
 const API_BASE_URL = 'http://localhost:8000';
 
 const AdminPanel = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook for programmatic navigation
 
+  // Redirects to the Checkout Monitoring page
   const handleCheckoutRedirect = () => {
     navigate('/admin/CheckOutMonitoring');
   };
 
+  // Handles logout process
   const handleLogout = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token'); // Get token from local storage
 
     try {
+      // Send logout request to backend
       await fetch(`${API_BASE_URL}/api/logout`, {
         method: 'POST',
         headers: {
@@ -25,8 +29,10 @@ const AdminPanel = () => {
         },
       });
     } catch (error) {
+      // Log any errors that occur during logout
       console.error('Logout failed', error);
     } finally {
+      // Clear local storage and redirect to login page
       localStorage.removeItem('token');
       navigate('/auth/login');
     }
