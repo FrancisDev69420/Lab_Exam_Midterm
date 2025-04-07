@@ -34,7 +34,7 @@ const AdminPanel = () => {
     } finally {
       // Clear local storage and redirect to login page
       localStorage.removeItem('token');
-      navigate('/auth/login');
+      navigate('/');
     }
   };
 
