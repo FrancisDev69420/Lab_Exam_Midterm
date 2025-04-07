@@ -1,5 +1,5 @@
 // src/components/CartPage.js
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -8,7 +8,7 @@ import Modal from 'react-modal';
 Modal.setAppElement('#root'); // Important for accessibility
 
 const CartPage = () => {
-    const { cartItems, increaseQuantity, decreaseQuantity, removeItem, fetchCartItems } = useCart();
+    const { cartItems, increaseQuantity, decreaseQuantity, removeItem, clearCart} = useCart();
     const navigate = useNavigate();
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [shippingAddress, setShippingAddress] = useState('');
@@ -42,7 +42,7 @@ const CartPage = () => {
             navigate('/auth/login');
             return;
         }
-
+    
         try {
             const response = await axios.post(
                 'http://localhost:8000/api/checkout',
@@ -56,11 +56,12 @@ const CartPage = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
-
+    
             if (response.status === 200) {
                 alert('Checkout successful!');
-                await fetchCartItems();
-                navigate('/order-success');
+                // Clear the cart
+                clearCart(); // Assuming you have a clearCart function in your CartContext
+                navigate('/');
             } else {
                 alert('Checkout failed. Please try again.');
             }

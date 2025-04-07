@@ -108,6 +108,21 @@ export const CartProvider = ({ children }) => {
         }
     };
 
+    const clearCart = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+    
+        try {
+            await axios.delete('http://localhost:8000/api/cart/clear', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setCartItems([]); // Clear the React state
+            await fetchCartItems(); //refresh cart items.
+        } catch (error) {
+            console.error('Error clearing cart:', error);
+        }
+    };
+
     const value = {
         cartItems,
         addToCart,
@@ -115,6 +130,7 @@ export const CartProvider = ({ children }) => {
         increaseQuantity,
         decreaseQuantity,
         removeItem,
+        clearCart,
     };
 
     return (
