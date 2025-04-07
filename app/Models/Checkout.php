@@ -1,12 +1,29 @@
 <?php
 
 namespace App\Models;
-use App\Models\OrderItem;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Checkout extends Model
 {
-    public function items(){
-        return $this->hasMany(OrderItem::class);
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'cart_items',
+        'shipping_address',
+        'phone_number',
+        'payment_method',
+        'total_amount',
+    ];
+
+    protected $casts = [
+        'cart_items' => 'array', // Automatically cast to array
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
