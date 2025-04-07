@@ -31,7 +31,7 @@ const Login = () => {
         if (data.user.role === 'employee') {
           navigate('/admin/AdminPanel');
         } else {
-          navigate('/store');
+          navigate('/');
         }
       } else {
         setError(data.message || 'Login failed');
