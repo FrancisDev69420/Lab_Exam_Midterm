@@ -4,20 +4,29 @@ import { Table, Button, Modal, Form } from 'react-bootstrap';
 const API_BASE_URL = 'http://localhost:8000'; // Your backend URL
 
 const CheckoutMonitoring = () => {
+    // State to store fetched checkout data
     const [checkout, setCheckOuts] = useState([]);
+    
+    // State to control modal visibility
     const [showModal, setShowModal] = useState(false);
+    
+    // Stores the selected checkout to be viewed in the modal
     const [selectedCheckout, setSelectedCheckout] = useState(null);
+    
+    // Stores the selected date for filtering checkouts
     const [filterDate, setFilterDate] = useState('');
 
-    // Fetch checkouts when the component mounts
+    // Fetch checkouts from the API when the component mounts or filterDate changes
     useEffect(() => {
         const fetchCheckouts = async () => {
+            // Use filtered endpoint if a date is selected
             let url = `${API_BASE_URL}/api/checkouts`; 
             if (filterDate) {
                 url = `${API_BASE_URL}/api/checkouts/filter/${filterDate}`;
             }
 
             try {
+                // Send GET request to fetch checkouts
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
@@ -26,6 +35,7 @@ const CheckoutMonitoring = () => {
                     },
                 });
 
+                // Update state if request is successful
                 if (response.ok) {
                     const data = await response.json();
                     setCheckOuts(data);
@@ -38,8 +48,9 @@ const CheckoutMonitoring = () => {
         };
 
         fetchCheckouts();
-    }, [filterDate]);
+    }, [filterDate]); // Re-fetch when filterDate changes
 
+    // Function to show modal and set selected checkout
     const viewCheckout = (checkout) => {
         setSelectedCheckout(checkout);
         setShowModal(true);
@@ -48,6 +59,8 @@ const CheckoutMonitoring = () => {
     return (
         <div className="container mt-5">
             <h2>Checkout Monitoring</h2>
+
+            {/* Filter by Date Input */}
             <Form.Group controlId="filterDate" className="mb-3">
                 <Form.Label>Filter by Date</Form.Label>
                 <Form.Control
@@ -56,6 +69,8 @@ const CheckoutMonitoring = () => {
                     onChange={(e) => setFilterDate(e.target.value)}
                 />
             </Form.Group>
+
+            {/* Table displaying list of checkouts */}
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -83,6 +98,7 @@ const CheckoutMonitoring = () => {
                 </tbody>
             </Table>
 
+            {/* Modal to show selected checkout details */}
             {selectedCheckout && (
                 <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
                     <Modal.Header closeButton>
@@ -115,6 +131,7 @@ const CheckoutMonitoring = () => {
                 </Modal>
             )}
 
+            {/* Button to go back to the previous page (product list) */}
             <Button variant="secondary" onClick={() => window.history.back()} className="mt-4">
                 Back To Product List
             </Button>
