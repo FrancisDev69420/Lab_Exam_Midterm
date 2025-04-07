@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import backgroundImage from '../../loginRegisterBG.png'; // Ensure path is correct
+import backgroundImage from '../../loginRegisterBG.png'; 
 
 const API_BASE_URL = 'http://localhost:8000';
 
@@ -31,7 +31,7 @@ const Login = () => {
         if (data.user.role === 'employee') {
           navigate('/admin/AdminPanel');
         } else {
-          navigate('/');
+          navigate('/customer/CustomerStorefront');
         }
       } else {
         setError(data.message || 'Login failed');

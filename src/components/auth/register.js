@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
-import backgroundImage from '../../loginRegisterBG.png'; // ✅ Import background image
+import backgroundImage from '../../loginRegisterBG.png'; 
 
 const API_BASE_URL = 'http://localhost:8000';
 
