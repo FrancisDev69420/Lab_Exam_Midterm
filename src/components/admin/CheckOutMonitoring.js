@@ -21,8 +21,9 @@ const CheckoutMonitoring = () => {
         const fetchCheckouts = async () => {
             let url = `${API_BASE_URL}/api/checkouts`;
             if (filterDate) {
-                url = `${API_BASE_URL}/api/checkouts/filter/${filterDate}`;
+                url = `${API_BASE_URL}/api/checkouts?date=${filterDate}`;
             }
+
 
             const token = localStorage.getItem('token');
             try {
@@ -97,6 +98,9 @@ const CheckoutMonitoring = () => {
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -104,6 +108,8 @@ const CheckoutMonitoring = () => {
                             checkout.map((checkout) => (
                                 <tr key={checkout.id}>
                                     <td>{checkout.id}</td>
+                                    <td>{checkout.user.name}</td>
+                                    <td>{new Date(checkout.created_at).toLocaleString()}</td>
                                     <td>
                                         <Button
                                             variant="info"
@@ -131,19 +137,19 @@ const CheckoutMonitoring = () => {
                             <Modal.Title>Checkout Details</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <p><strong>Customer:</strong> {selectedCheckout.customer}</p>
+                            <p><strong>Customer:</strong> {selectedCheckout.user.name}</p>
                             <p><strong>Date:</strong> {new Date(selectedCheckout.created_at).toLocaleString()}</p>
                             <hr />
                             <h6>Items:</h6>
                             <ul>
-                                {selectedCheckout.items.map((item, index) => (
+                                {selectedCheckout.cart_items.map((item, index) => (
                                     <li key={index}>
-                                        {item.product_name} — {item.quantity} x ₱{item.price}
+                                        {item.product.name} — {item.quantity} x ₱{item.product.price}
                                     </li>
                                 ))}
                             </ul>
                             <hr />
-                            <p><strong>Total:</strong> ₱{selectedCheckout.total_price}</p>
+                            <p><strong>Total:</strong> ₱{selectedCheckout.total_amount}</p>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="secondary" onClick={() => setShowModal(false)}>

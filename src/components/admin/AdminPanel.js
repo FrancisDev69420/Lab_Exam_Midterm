@@ -34,7 +34,7 @@ const AdminPanel = () => {
     } finally {
       // Clear local storage and redirect to login page
       localStorage.removeItem('token');
-      navigate('/');
+      navigate('/auth/login');
     }
   };
 
@@ -59,7 +59,7 @@ const AdminPanel = () => {
           borderRadius: '15px',
           padding: '2rem',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
-          maxWidth: '1000px',
+          maxWidth: '1200px',
           width: '100%',
         }}
       >
