@@ -1,4 +1,3 @@
-// src/components/AdminPanel.js
 import React, { useState, useEffect } from 'react';
 import ProductManagement from './ProductManagement';
 import TransactionMonitoring from './TransactionMonitoring';
